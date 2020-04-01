@@ -74,13 +74,13 @@ public class MainActivity extends AppCompatActivity
         //Create reddit account helper
         final RedditAccountHelper redditAccountHelper = new RedditAccountHelper();
         //Get the username / email edit text
-        final EditText userNameEmail = (EditText) findViewById(R.id.user_email);
+        final EditText userNameEmail = findViewById(R.id.user_email);
         //Get the password
-        final EditText password = (EditText) findViewById(R.id.user_password);
+        final EditText password = findViewById(R.id.user_password);
         //Get the login button
-        Button login = (Button) findViewById(R.id.login_button);
+        Button login = findViewById(R.id.login_button);
         //Get the register button
-        Button register = (Button) findViewById(R.id.register_button);
+        Button register = findViewById(R.id.register_button);
 
         //Run on login button clicked
         login.setOnClickListener(new View.OnClickListener()
