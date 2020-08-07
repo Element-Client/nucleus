@@ -2,39 +2,30 @@ package elemental.reddit;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import net.dean.jraw.RedditClient;
-import net.dean.jraw.android.AndroidHelper;
-import net.dean.jraw.android.AppInfoProvider;
-import net.dean.jraw.android.ManifestAppInfoProvider;
-import net.dean.jraw.android.SharedPreferencesTokenStore;
-import net.dean.jraw.android.SimpleAndroidLogAdapter;
-import net.dean.jraw.http.LogAdapter;
-import net.dean.jraw.http.SimpleHttpLogger;
-import net.dean.jraw.models.Account;
-import net.dean.jraw.oauth.AccountHelper;
-import net.dean.jraw.oauth.Credentials;
 
+import java.io.IOException;
 import java.util.UUID;
 
-import elemental.reddit.account.OnAccountLogin;
-import elemental.reddit.account.RedditAccountHelper;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 public class MainActivity extends AppCompatActivity
 {
+    public static String AUTH_URL = "https://www.reddit.com/api/v1/authorize?client_id=_sDG6vsDibq0-g&response_type=code&state=2fs&redirect_uri=https://www.reddit.com/login/&duration=permanent&scope=identity edit flair history modconfig modflair modlog modposts modwiki mysubreddits privatemessages read report save submit subscribe vote wikiedit wikiread";
+    public static String REGISTER_URL = "https://reddit.com/register?redirect_uri="+AUTH_URL;
     //Shared preferences for settings
     protected SharedPreferences settings;
-    //Credentials for reddit
-    protected Credentials redditCredentials;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -43,7 +34,7 @@ public class MainActivity extends AppCompatActivity
         //On create
         super.onCreate(savedInstanceState);
         //Get the default theme
-        String theme = this.settings.getString("theme", "light");
+        String theme = this.settings.getString("theme", "dark");
         //Check if theme is dark
         if(theme.equals("dark"))
         {
@@ -66,17 +57,10 @@ public class MainActivity extends AppCompatActivity
                 userNotLoggedIn();
             }
         }
-
     }
 
     protected void userNotLoggedIn()
     {
-        //Create reddit account helper
-        final RedditAccountHelper redditAccountHelper = new RedditAccountHelper();
-        //Get the username / email edit text
-        final EditText userNameEmail = findViewById(R.id.user_email);
-        //Get the password
-        final EditText password = findViewById(R.id.user_password);
         //Get the login button
         Button login = findViewById(R.id.login_button);
         //Get the register button
@@ -88,14 +72,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                //Log in using JRAW
-                redditAccountHelper.login(userNameEmail.getText().toString(), password.getText().toString(), new OnAccountLogin() {
-                    @Override
-                    public void onLogin()
-                    {
-
-                    }
-                });
+                //Create an intent
+                Intent login = new Intent(Intent.ACTION_VIEW);
+                //Set the URI to the authentication url
+                login.setData(Uri.parse("https://www.reddit.com/login?redirect_url="+AUTH_URL));
+                //Start the intent
+                startActivity(login);
             }
         });
 
@@ -105,8 +87,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                //Open web browser to register page
+                //Create an intent
+                Intent registerIntent = new Intent(Intent.ACTION_VIEW);
+                //Set the URI to the signup page
+                registerIntent.setData(Uri.parse(REGISTER_URL));
+                //Start the activity
+                startActivity(registerIntent);
             }
         });
     }
+
+
 }
